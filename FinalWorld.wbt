@@ -1,0 +1,348 @@
+#VRML_SIM R2021a utf8
+WorldInfo {
+  basicTimeStep 16
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation -0.9837009746547395 0.12305087296992558 0.13111397760976798 0.8657694316510643
+  position 7.162420945565746 19.886951312889654 25.064090462501106
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+DEF _ Floor {
+  translation 7.5 0 7.5
+  size 15 15
+  tileSize 1 1
+}
+Solid {
+  translation 7.500627923529092 0.23821915415791747 -0.001747148293229741
+  rotation 0.9988701885969145 -0.01329312751066944 0.04562498321478287 -0.005506510099599186
+  children [
+    DEF SHAPE_SHIFT Shape {
+      appearance PBRAppearance {
+        roughness 0.5
+        metalness 0
+      }
+      geometry DEF BOX_GEOMETRY Box {
+        size 15 0.5 0.01
+      }
+    }
+  ]
+  name "solid(2)"
+  boundingObject USE BOX_GEOMETRY
+}
+Solid {
+  translation 7.5 0.25 15
+  children [
+    USE SHAPE_SHIFT
+  ]
+  name "solid(3)"
+  boundingObject USE BOX_GEOMETRY
+}
+Solid {
+  translation 15 0.25 7.5
+  rotation 0 1 0 1.5708
+  children [
+    USE SHAPE_SHIFT
+  ]
+  name "solid(4)"
+  boundingObject USE BOX_GEOMETRY
+}
+Solid {
+  translation 0 0.25 7.5
+  rotation 0 1 0 1.5708
+  children [
+    USE SHAPE_SHIFT
+  ]
+  name "solid(5)"
+  boundingObject USE BOX_GEOMETRY
+}
+Solid {
+  translation 2 0.25 13.75
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 2.5 0.5 0.1
+      }
+    }
+  ]
+  boundingObject Box {
+    size 2.5 0.5 0.1
+  }
+}
+Solid {
+  translation 2 0.25 10.5
+  rotation 0 1 0 3.14
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 4 0.5 0.1
+      }
+    }
+  ]
+  name "solid(1)"
+  boundingObject Box {
+    size 4 0.5 0.1
+  }
+}
+Solid {
+  translation 11 0.25 10.5
+  rotation 0 1 0 3.14
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 8 0.5 0.1
+      }
+    }
+  ]
+  name "solid(7)"
+  boundingObject Box {
+    size 8 0.5 0.1
+  }
+}
+Solid {
+  translation 4 0.25 11.75
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 2.5 0.5 0.1
+      }
+    }
+  ]
+  name "solid(8)"
+  boundingObject Box {
+    size 2.5 0.5 0.1
+  }
+}
+Solid {
+  translation 3 0.25 10.5
+  rotation 0 1 0 3.14
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 4 0.5 0.1
+      }
+    }
+  ]
+  name "solid(9)"
+  boundingObject Box {
+    size 4 0.5 0.1
+  }
+}
+Solid {
+  translation 7.5 0.25 8
+  rotation 0 1 0 3.14
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 11 0.5 0.1
+      }
+    }
+  ]
+  name "solid(11)"
+  boundingObject Box {
+    size 11 0.5 0.1
+  }
+}
+Solid {
+  translation 7 0.25 13.75
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 2.5 0.5 0.1
+      }
+    }
+  ]
+  name "solid(12)"
+  boundingObject Box {
+    size 2.5 0.5 0.1
+  }
+}
+Solid {
+  translation 10 0.25 12.5
+  rotation 0 1 0 3.14
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 6 0.5 0.1
+      }
+    }
+  ]
+  name "solid(13)"
+  boundingObject Box {
+    size 6 0.5 0.1
+  }
+}
+Solid {
+  translation 12.5 0.25 6
+  rotation 0 1 0 3.14
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 5 0.5 0.1
+      }
+    }
+  ]
+  name "solid(14)"
+  boundingObject Box {
+    size 5 0.5 0.1
+  }
+}
+Solid {
+  translation 5 0.25 6
+  rotation 0 1 0 3.14
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 6 0.5 0.1
+      }
+    }
+  ]
+  name "solid(15)"
+  boundingObject Box {
+    size 6 0.5 0.1
+  }
+}
+Solid {
+  translation 8 0.25 4.75
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 2.5 0.5 0.1
+      }
+    }
+  ]
+  name "solid(16)"
+  boundingObject Box {
+    size 2.5 0.5 0.1
+  }
+}
+Solid {
+  translation 12.5 0.25 3.5
+  rotation 0 1 0 3.14
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 5 0.5 0.1
+      }
+    }
+  ]
+  name "solid(17)"
+  boundingObject Box {
+    size 5 0.5 0.1
+  }
+}
+Solid {
+  translation 10 0.25 0.5
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 1 0.5 0.1
+      }
+    }
+  ]
+  name "solid(18)"
+  boundingObject Box {
+    size 1 0.5 0.1
+  }
+}
+Solid {
+  translation 5 0.25 2
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 4 0.5 0.1
+      }
+    }
+  ]
+  name "solid(10)"
+  boundingObject Box {
+    size 4 0.5 0.1
+  }
+}
+Solid {
+  translation 2 0.25 4
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 4 0.5 0.1
+      }
+    }
+  ]
+  name "solid(19)"
+  boundingObject Box {
+    size 4 0.5 0.1
+  }
+}
+TiagoSteel {
+  translation 0.918827 0.0914641 0.883312
+  rotation 0.9843868144756912 -0.1224271861715931 -0.12646811286845108 -1.584075670329418
+  name "TIAGo Steel(1)"
+  controller "final_controller"
+  cameraSlot [
+    Display {
+      width 450
+      height 450
+    }
+    Compass {
+      translation -0.206 0 -0.041438
+    }
+    GPS {
+      translation -0.190515 0 -0.015552
+    }
+    Camera {
+      rotation 0 1 0 -1.57
+      width 320
+      height 240
+      recognition Recognition {
+        segmentation TRUE
+      }
+    }
+    RangeFinder {
+      rotation 0 1 0 -1.57
+      width 320
+      height 240
+      minRange 0.1
+      maxRange 5.6
+    }
+  ]
+}
