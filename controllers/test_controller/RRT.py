@@ -139,6 +139,7 @@ def rrt(starting_point, goal_point, k, delta_q, mapa):
     # TODO: Your code here
     # TODO: Make sure to add every node you create onto node_list, and to set node.parent and node.path_from_parent for each
     # going through k iterations
+    broken = False
     for i in range(0,k):
     	#if we have a goal point
         if(goal_point is not None):
@@ -167,6 +168,19 @@ def rrt(starting_point, goal_point, k, delta_q, mapa):
         if(goal_point is not None):
         	#if the latest node point added is very close to the goal, then end the loop
             if(np.linalg.norm(node_list[len(node_list) - 1].point - goal_point) < 10**-5):
+                broken = True
                 break
+    if(broken == True):
+        points = []
+        points.append(node_list[-1].point)
+        parent = node_list[-1].parent
+        while parent != None:
+            for i in node_list:
+                if(parent == i.point):
+                    points.append(i.point)
+                    parent = i.parent
+        return points.reverse()
+    else:
+        return None
+
     #returning the list of nodes.
-    return node_list
