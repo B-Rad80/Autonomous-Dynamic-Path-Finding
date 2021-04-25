@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from scipy.signal import convolve2d # Uncomment if you want to use something else for finding the configuration space
 from queue import PriorityQueue
 import Algorithms as algo
+from RRT import rrt
 
 MAX_SPEED = 7.0  # [rad/s]
 MAX_SPEED_MS = 0.633 # [m/s]
@@ -330,6 +331,7 @@ while robot.step(timestep) != -1 and mode != 'planner':
 
                         if(map[next_x][next_y] >= .75):
                             print("recalculate path ",map[next_x][next_y] ,convertW(next_y ,next_x))
+                            map = algo.gen_box_map(map, 11)
         #if the bearing error is large enough. then prioritize it in the gains
         if(abs(errorb) > .2):
             gainp = .2
