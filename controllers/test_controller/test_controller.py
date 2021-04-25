@@ -77,8 +77,8 @@ vL = 0
 vR = 0
 
 
-mode = 'planner'
-#mode = 'autonomous'
+#mode = 'planner'
+mode = 'autonomous'
 
 lidar_sensor_readings = []
 lidar_offsets = np.linspace(-LIDAR_ANGLE_RANGE/2., +LIDAR_ANGLE_RANGE/2., LIDAR_ANGLE_BINS)
@@ -95,6 +95,10 @@ compass.enable(timestep)
 # Planner
 #
 ###################
+def convertM(x,y):
+    return (round(y*(30)),round(x*(30)))
+def convertW(x,y):
+    return(y*(1/30), x*(1/30))
 
 if mode == 'planner':
 
@@ -105,10 +109,7 @@ if mode == 'planner':
     box_map = algo.gen_box_map(map, 11)
     plt.imshow(box_map)
     plt.show()
-    def convertM(x,y):
-        return (round(y*(30)),round(x*(30)))
-    def convertW(x,y):
-        return(y*(1/30), x*(1/30))
+
     #starting world coordinates of the bot
     s_x = 1
     s_y = .815
@@ -157,7 +158,7 @@ if mode == 'autonomous':
          with open(file, 'rb') as f:
                    return np.load(f)
     #opening the visualization of the path and the path
-    map = loadmap("final.npy")
+    map = loadmap("box_map.npy")
     points = loadmap('path.npy')
     plt.imshow(map)
     plt.show()
@@ -227,10 +228,12 @@ while robot.step(timestep) != -1 and mode != 'planner':
                 if map[x][y] > 0:
                     map[x][y] -= .0025
             ''' 
+           
+
             if(map[m_x][m_y] <= 1):
             
-               map[m_x][m_y] += .005
-            
+               map[m_x][m_y] += .01
+           
             g = map[m_x][m_y]
             if(g>.75):
             
@@ -304,6 +307,8 @@ while robot.step(timestep) != -1 and mode != 'planner':
         if((errorp < .2)):
                 #increment to the next waypoint
                 state = state + 10
+               
+            
                 #if the waypoint number is equivalant to the amount of waypoints
                 if(state >= len(locs)):
                     #set motor velocities at zero
@@ -312,9 +317,19 @@ while robot.step(timestep) != -1 and mode != 'planner':
                     #end the loop
                     print("Final State", pose_x, pose_y)
                     break
-                else:
+                elif(state + 20 <= len(locs)):
                     #continue on
-                    continue
+                    i = state
+                    while (i < state + 20):
+                        i +=1
+                        next_pos = convertM(locs[i][1],locs[i][0])
+                    
+                        next_x = int(next_pos[0])
+                        next_y = int(next_pos[1])
+                    
+
+                        if(map[next_x][next_y] >= .75):
+                            print("recalculate path ",map[next_x][next_y] ,convertW(next_y ,next_x))
         #if the bearing error is large enough. then prioritize it in the gains
         if(abs(errorb) > .2):
             gainp = .2

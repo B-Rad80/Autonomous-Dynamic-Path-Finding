@@ -167,7 +167,7 @@ def gen_box_map(map : list, box_size):
     for x in range(len(map)):
         for y in range(len(map[x])):
             #print(map[x][y], "map_XY")
-            if map[x][y] >= 1:
+            if map[x][y] >= 1 and map[x][y] < 2:
     
                 for xb in range(box_size+2):
                     for yb in range(box_size+2):
@@ -178,10 +178,14 @@ def gen_box_map(map : list, box_size):
 
     for row in range(len(box_map)):
         for val in range(len(box_map[row])):
+            if not box_map[row][val] == 2:
+                box_map[row][val] = 0
+            '''
             if box_map[row][val] == 2:
                 box_map[row][val] = 1
             else:
                 box_map[row][val] = 0
+            '''
 
     if 2 in box_map:
         print("failure")     

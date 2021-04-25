@@ -4,8 +4,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation -0.9837009746547395 0.12305087296992558 0.13111397760976798 0.8657694316510643
-  position 7.162420945565746 19.886951312889654 25.064090462501106
+  orientation -0.8325248148486126 -0.36032308524345347 0.42079651484051306 0.13038019113202362
+  position 4.12522272166199 4.100035905453436 27.51501532618526
 }
 TexturedBackground {
 }
@@ -317,7 +317,7 @@ TiagoSteel {
   translation 0.918827 0.0914641 0.883312
   rotation 0.9843868144756912 -0.1224271861715931 -0.12646811286845108 -1.584075670329418
   name "TIAGo Steel(1)"
-  controller "final_controller"
+  controller "test_controller"
   cameraSlot [
     Display {
       width 450
@@ -345,4 +345,20 @@ TiagoSteel {
       maxRange 5.6
     }
   ]
+}
+Solid {
+  translation 1.55 0.26 8.19
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 1 1 1
+      }
+    }
+  ]
+  name "solid(6)"
+  boundingObject Box {
+    size 1 1 1
+  }
 }
