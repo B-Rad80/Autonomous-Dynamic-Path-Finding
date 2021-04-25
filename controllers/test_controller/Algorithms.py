@@ -160,10 +160,10 @@ def loadmap(file):
 map = loadmap("test.npy")
 
 
-def gen_box_map(map, box_size):
+def gen_box_map(map : list, box_size):
     box_map =  np.zeros_like(map)
-    if 1 in map:
-        print("1 found!")
+    #if 1 in map:
+     #   print("1 found!")
     for x in range(len(map)):
         for y in range(len(map[x])):
             #print(map[x][y], "map_XY")

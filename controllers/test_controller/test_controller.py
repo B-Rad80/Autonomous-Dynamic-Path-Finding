@@ -23,6 +23,10 @@ robot = Robot()
 # get the time step of the current world.
 timestep = int(robot.getBasicTimeStep())
 
+def loadmap(file):
+         with open(file, 'rb') as f:
+                   return np.load(f)
+
 # The Tiago robot has multiple motors, each identified by their names below
 part_names = ("head_2_joint", "head_1_joint", "torso_lift_joint", "arm_1_joint",
               "arm_2_joint",  "arm_3_joint",  "arm_4_joint",      "arm_5_joint",
@@ -73,8 +77,8 @@ vL = 0
 vR = 0
 
 
-# mode = 'planner'
-mode = 'autonomous'
+mode = 'planner'
+#mode = 'autonomous'
 
 lidar_sensor_readings = []
 lidar_offsets = np.linspace(-LIDAR_ANGLE_RANGE/2., +LIDAR_ANGLE_RANGE/2., LIDAR_ANGLE_BINS)
@@ -91,11 +95,13 @@ compass.enable(timestep)
 # Planner
 #
 ###################
+
 if mode == 'planner':
 
 # Part 2.3 continuation: Call path_planner
     #start positions in world coordinates
     #equations to convert map points to world points and world points to map points
+    map = loadmap("test.npy")
     box_map = algo.gen_box_map(map, 11)
     plt.imshow(box_map)
     plt.show()
@@ -205,10 +211,25 @@ while robot.step(timestep) != -1 and mode != 'planner':
 
             
             m_x = int(wx*30-1) -1 
-            m_y = int(wy*30-1) -1 
+            m_y = int(wy*30-1) -1 \
+
+            mpose_x = int(pose_x*30-1) -1 
+            mpose_y = int(pose_y*30-1) -1
+
+            '''
+            #try to clean up lidar data (failed)
+            dist = int(np.linalg.norm(np.subtract((m_x,m_y),(mpose_x,mpose_y))))
+            line = np.linspace([m_x,m_y], [mpose_x,mpose_y], dist)
+
+            for x, y in line:
+                x = int(x)
+                y = int(y)
+                if map[x][y] > 0:
+                    map[x][y] -= .0025
+            ''' 
             if(map[m_x][m_y] <= 1):
             
-               map[m_x][m_y] += .01
+               map[m_x][m_y] += .005
             
             g = map[m_x][m_y]
             if(g>.75):
