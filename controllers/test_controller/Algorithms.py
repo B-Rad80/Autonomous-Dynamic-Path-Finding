@@ -41,10 +41,10 @@ def path_planner(map, start, goal):
 
     q = PriorityQueue()
 
-    if(map[start[0]][start[1]] == 1):
+    if(map[start[0]][start[1]] >= 1):
         print("INVALID STARTING LOCATION")
         return "INVALID STARTING LOCATION"
-    if(map[goal[0]][goal[1]]==1):
+    if(map[goal[0]][goal[1]]>= 1):
         print("INVALID GOAL LOCATION")
         return "INVALID GOAL LOCATION"
 
@@ -161,7 +161,7 @@ map = loadmap("test.npy")
 
 
 def gen_box_map(map : list, box_size, save : bool = False):
-    box_map =  map
+    box_map =  map.copy()
     #if 1 in map:
      #   print("1 found!")
     for x in range(len(map)):
@@ -170,8 +170,8 @@ def gen_box_map(map : list, box_size, save : bool = False):
             if map[x][y] >= 1 and map[x][y] < 2:
                 #print(map[x][y], "gen_box_map", x, y)
     
-                for xb in range(box_size+2):
-                    for yb in range(box_size+2):
+                for xb in range(box_size):
+                    for yb in range(box_size):
 
                         if x-box_size/2 + xb > 0 and x-box_size/2 + xb < len(map) and y-box_size/2 + yb > 0 and y-box_size/2 + yb < len(map):
 
@@ -213,6 +213,6 @@ if __name__ == "__main__":
     map = loadmap("./test.npy")
 
     printMap(map)
-    map = gen_box_map(map, 11)
+    map = gen_box_map(map, 20, True)
     #map = loadmap("./box_map.npy")
     printMap(map)

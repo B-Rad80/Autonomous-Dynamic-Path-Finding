@@ -21,11 +21,11 @@ def state_is_valid(state, mapa):
     :param state: n-Dimensional point
     :return: Boolean whose value depends on whether the state/point is valid or not
     '''
-    if state[0] <= 0: return False
-    if state[0] > len(mapa): return False
-    if state[1] > len(mapa): return False
-    if state[1] <= 0: return False    
-    if(mapa[int(state[0])][int(state[1])] == 1):
+    if state[0] < 0: return False
+    if state[0] >= len(mapa): return False
+    if state[1] >= len(mapa): return False
+    if state[1] < 0: return False    
+    if(mapa[round(state[0])][round(state[1])] == 1):
         return False
     return True
 
@@ -38,8 +38,8 @@ def get_random_valid_vertex(mapa):
     '''
     vertex = None
     while vertex is None: # Get starting vertex
-        pt = [random.randrange(0,len(mapa)), random.randrange(0,len(mapa))]
-        #print(pt, "pt")
+        pt = [random.randrange(0,400), random.randrange(0,400)]
+        print(pt, "pt")
         if state_is_valid(pt, mapa):
             vertex = np.array(pt)
     return vertex
@@ -89,13 +89,13 @@ def steer(from_point, to_point, delta_q):
     #if the length of the distance is less than the max length then its ok
     if(dist <= delta_q):
     	#getting 10 points between the two nodes
-        path = np.linspace(from_point, to_point, num = 10)
+        path = np.linspace(from_point, to_point, num = 50)
     #if the length of the distance between the two nodes is greater than the max
     else:
     	#get the vector between the two nodes and divide by its length to make it a unit vector. then multiply it by the max length to make it the max length. Add the vector to the from point to get the final poin
         sub = (((to_point-from_point)/(dist))*delta_q)+from_point
         #getting 10 point between the start and end point
-        path = np.linspace(from_point, sub, num = 10)
+        path = np.linspace(from_point, sub, num = 50)
         for i in range(len(path)):
             path[i] = np.array([int(path[i][0]),int(path[i][1])])
 

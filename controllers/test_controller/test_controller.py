@@ -117,8 +117,8 @@ if mode == 'planner':
     #converting the coordinates to map coordinates
     s_x1, s_y1 = convertM(s_x, s_y)
     #ending coordinates for the bot
-    f_x = 8.03
-    f_y = 13.6
+    f_x = 8.62
+    f_y = 6.76
     #converting the coordinates to map coordinates
     f_x1, f_y1 = convertM(f_x, f_y)
 
@@ -137,7 +137,7 @@ if mode == 'planner':
         box_map[x][y] = .2
     for x,y in locs:
         box_map[x][y] = .5
-    plt.printMap(box_map)
+    plt.imshow(box_map)
     #making a file with all the path coordinates
     with open('path.npy', 'wb') as f:
         np.save(f, locs)
@@ -172,8 +172,7 @@ if mode == 'autonomous':
     #opening the visualization of the path and the path
     map = loadmap("box_map.npy")
     points = loadmap('path.npy')
-    plt.imshow(map)
-    plt.show()
+
     #convert world states to map states
     def convertM(x,y):
         return (round(y*(30)),round(x*(30)))
@@ -187,6 +186,43 @@ if mode == 'autonomous':
         locs.append(convertW(i[1],i[0]))
 state = 20 # use this to iterate through your path
 
+def printPath(coords, map):
+    first = []
+    second = []
+    for x,y in coords:
+        map[int(x)][int(y)] = .5
+    printMap(map)
+def check_neighbors_exist(possible_neighbors, map, visited):
+       
+
+    map_size = len(map)
+    neighbors = []
+    #unq_cnt = unique(visited)
+    #print(unq_cnt, "visit")
+    for x, y in possible_neighbors:
+        if(x < map_size and x > 0 and y < map_size and y > 0 and not (x,y) in visited):
+            neighbors.append((x,y))
+    return neighbors
+def findNewStart(map, tup, visited = []):
+    x,y = tup
+    neighbors = [(x-1, y), (x+1, y), (x,y+1), (x,y-1)]
+    n = check_neighbors_exist(neighbors, map, visited)
+    visited.append((x,y))
+    if(map[x][y] < 1):
+        return (x,y)
+    elif(n == []):
+        return "Found Nothing"
+    else:
+        for i in n:
+            return findNewStart(map, i, visited)
+def checkColl(loc, map, r = round((AXLE_LENGTH/2) * 30) -1):
+    x,y = loc
+    cool = [(x+r,y),(x,y+r),(x+r,y+r), (x+r,y-r),(x-r,y+r), (x-r,y),(x,y-r),(x-r,y-r)]
+    n = check_neighbors_exist(cool, map, [])
+    for x,y in n:
+        if(map[x][y] >= 1):
+            return True
+    return False
 while robot.step(timestep) != -1 and mode != 'planner':
 ###################
 #
@@ -330,6 +366,7 @@ while robot.step(timestep) != -1 and mode != 'planner':
                     print("Final State", pose_x, pose_y)
                     break
                 elif(state + 20 <= len(locs)):
+
                     #continue on
                     i = state
                     new_path_flag = False
@@ -339,13 +376,12 @@ while robot.step(timestep) != -1 and mode != 'planner':
                     
                         next_x = int(next_pos[0])
                         next_y = int(next_pos[1])
-                    
 
-                        if(map[next_x][next_y] >= .75):
+                        if(map[next_x][next_y] >= 1):
                             print("recalculate path ",map[next_x][next_y] ,convertW(next_y ,next_x))
 
-                            if(i + 50  < len(locs)):
-                                next_pos = convertM(locs[i+50][1],locs[i+50][0])
+                            if(i + 20  < len(locs)):
+                                next_pos = convertM(locs[i+20][1],locs[i+20][0])
                 
                                 
                             else:
@@ -353,11 +389,33 @@ while robot.step(timestep) != -1 and mode != 'planner':
                             
                             next_x = int(next_pos[0])
                             next_y = int(next_pos[1])
+                            maps = map.copy()
+                            map1 = algo.gen_box_map(map, 30)
+                            map = algo.gen_box_map(maps, 11)
+                            
 
-                            map = algo.gen_box_map(map, 11)
-                          
-                            new_path = rrt( convertM(pose_x, pose_y), (next_y,next_x), 1000, 10, map)
+                            # print("Before RRT:", '\n')
+                            # new_path = rrt( convertM(pose_y, pose_x), (next_x,next_y), 1000, 5, map)
+                            if(map1[convertM(pose_y, pose_x)[0]][convertM(pose_y, pose_x)[1]] >= 1):
+                                newStart = findNewStart(map1, convertM(pose_y, pose_x))
+                            else:
+                                newStart = convertM(pose_y, pose_x)
+                            print(newStart)
+                            goalloc = (next_x,next_y)
+                            while(map1[goalloc[0]][goalloc[1]] >= 1):
+                                goalloc = convertM(locs[i+20][1],locs[i+20][0])
+                                i+=20
+                            new_path = algo.path_planner(map1, newStart, goalloc)
+                            new_path1 = []
+                            print(new_path)
                             print("start and end pos", convertM(pose_x, pose_y),  (next_y,next_x))
+                            for z in new_path[0]:
+                                new_path1.append(z.location)
+                            new_path = new_path1
+                            new_path.reverse()
+                            # printPath(new_path, map)
+                            # print("After RRT:")
+                            
         
                             if (not new_path):
                                 #do A*
@@ -367,18 +425,15 @@ while robot.step(timestep) != -1 and mode != 'planner':
                                 new_world_path = []
         
                                 for x,y in new_path:
-                                    new_world_path.append(convertW(x,y))
-                                    print_list.append([(round(convertW(x,y)[0],3), round(convertW(x,y)[1],3)),(x,y)])
+                                    new_world_path.append(convertW(y,x))
+                                    print_list.append([(round(convertW(y,x)[0],3), round(convertW(y,x)[1],3))])
                                     if map[int(x)][int(y)] > .75:
                                         print("COLLISION IN NEW PATH", print_list[-1])
-                            
-                                    for  t in range(9):
-                                        new_world_path.append(convertW(x,y))
-                               # print(print_list)  
+                                print(print_list)  
                                 #print(locs[state: -1])
                                # print("before")
 
-                                locs = locs[0:state+1] + new_world_path + locs[i+50:] 
+                                locs = locs[0:state] + new_world_path + locs[state+20:] 
 
                                 #print(locs[state:-1], "AFter")
                             new_path_flag = True
@@ -387,14 +442,14 @@ while robot.step(timestep) != -1 and mode != 'planner':
                         
         #if the bearing error is large enough. then prioritize it in the gains
         if(abs(errorb) > .2):
-            gainp = .2
+            gainp = 0
             gainb = 3
         #if the bearing is small, prioritize equally
         if(abs(errorb) > 3):
-            gainp = .2
+            gainp = 0
             gainb = -3            
         else:
-            gainp = 6
+            gainp = 3
             gainb = 6
         #STEP 3: Compute wheelspeeds
         #calculating wheelspeeds given errors and gains.
