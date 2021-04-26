@@ -141,7 +141,10 @@ def rrt(starting_point, goal_point, k, delta_q, mapa):
     # TODO: Make sure to add every node you create onto node_list, and to set node.parent and node.path_from_parent for each
     # going through k iterations
     broken = False
+<<<<<<< HEAD
 
+=======
+>>>>>>> a56077ddfa75bf76b827dfe2fc5d3a3a74e0a577
     for i in range(0,k):
 
         if(i % 100 == 0):
