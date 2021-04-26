@@ -1,4 +1,4 @@
-from controller import Robot, Motor, Camera, RangeFinder, Lidar, Keyboard
+#from controller import Robot, Motor, Camera, RangeFinder, Lidar, Keyboard
 import math
 import numpy as np
 from matplotlib import pyplot as plt
@@ -160,7 +160,7 @@ def loadmap(file):
 map = loadmap("test.npy")
 
 
-def gen_box_map(map : list, box_size):
+def gen_box_map(map : list, box_size, save : bool = False):
     box_map =  np.zeros_like(map)
     #if 1 in map:
      #   print("1 found!")
@@ -168,6 +168,7 @@ def gen_box_map(map : list, box_size):
         for y in range(len(map[x])):
             #print(map[x][y], "map_XY")
             if map[x][y] >= 1 and map[x][y] < 2:
+                print(map[x][y], "gen_box_map x,y")
     
                 for xb in range(box_size+2):
                     for yb in range(box_size+2):
@@ -178,6 +179,7 @@ def gen_box_map(map : list, box_size):
 
     for row in range(len(box_map)):
         for val in range(len(box_map[row])):
+            
             if not box_map[row][val] == 2:
                 box_map[row][val] = 0
             '''
@@ -186,11 +188,30 @@ def gen_box_map(map : list, box_size):
             else:
                 box_map[row][val] = 0
             '''
+            
 
-    if 2 in box_map:
+    if 1 in box_map:
         print("failure")     
-
-    with open('box_map.npy', 'wb') as f:
-                np.save(f, box_map)
+    if(save):
+        with open('box_map.npy', 'wb') as f:
+            np.save(f, box_map)
+            print("saved box map")
 
     return box_map
+
+def printMap(map):
+    mapa = map
+    for i in range(len(mapa)):
+        for k in range(len(mapa)):
+            if mapa[i][k] >= 1:
+                mapa[i][k] = 1
+        
+    plt.imshow(mapa)
+    plt.show()
+if __name__ == "__main__": 
+    map = loadmap("./box_map.npy")
+
+    printMap(map)
+    map = gen_box_map(map, 11)
+    #map = loadmap("./box_map.npy")
+    printMap(map)

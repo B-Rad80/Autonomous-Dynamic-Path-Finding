@@ -137,7 +137,7 @@ if mode == 'planner':
         box_map[x][y] = .2
     for x,y in locs:
         box_map[x][y] = .5
-    plt.imshow(box_map)
+    plt.printMap(box_map)
     #making a file with all the path coordinates
     with open('path.npy', 'wb') as f:
         np.save(f, locs)
@@ -148,7 +148,15 @@ if mode == 'planner':
 
 
 # Part 1.2: Map Initialization
-
+def printMap(map):
+    mapa = map
+    for i in range(len(mapa)):
+        for k in range(len(mapa)):
+            if mapa[i][k] >= 1:
+                mapa[i][k] = 1
+        
+    plt.imshow(mapa)
+    plt.show()
 # Initialize your map data structure here as a 2D floating point array
 if mode == 'manual':
     map = np.zeros((500,500), dtype=float)
@@ -338,13 +346,17 @@ while robot.step(timestep) != -1 and mode != 'planner':
                     
                                 next_x = int(next_pos[0])
                                 next_y = int(next_pos[1])
- 
+                            print("premap")
+                            printMap(map)
+
                             map = algo.gen_box_map(map, 11)
+                            print("postmap")
+                            printMap(map)
                             print("pre-rrt")
-                            new_path = rrt( convertM(pose_x, pose_y), (next_x,next_y), 1000, 10, map)
+                            new_path = rrt( convertM(pose_x, pose_y), (next_y,next_x), 1000, 10, map)
                             print("start and end pos", convertM(pose_x, pose_y),  (next_x,next_y))
                             print("post-rrt")
-                            print(new_path, "new_path")
+                            #print(new_path, "new_path")
                             if (not new_path):
                                 #do A*
                                 continue
@@ -352,8 +364,10 @@ while robot.step(timestep) != -1 and mode != 'planner':
                                 new_world_path = []
                                 for x,y in new_path:
                                     new_world_path.append(convertW(x,y))
+                                    print(round(convertW(x,y)[0],3), round(convertW(x,y)[1],3), "world path cord")
                                     for x in range(9):
                                         new_world_path.append(convertW(x,y))
+                                
                                 
                                 locs[state : state + len(new_world_path)] = new_world_path
                                 
