@@ -332,7 +332,8 @@ while robot.step(timestep) != -1 and mode != 'planner':
                 elif(state + 20 <= len(locs)):
                     #continue on
                     i = state
-                    while (i < state + 20):
+                    new_path_flag = False
+                    while (i < state + 20 ) and not new_path_flag:
                         i +=1
                         next_pos = convertM(locs[i][1],locs[i][0])
                     
@@ -343,37 +344,44 @@ while robot.step(timestep) != -1 and mode != 'planner':
                         if(map[next_x][next_y] >= .75):
                             print("recalculate path ",map[next_x][next_y] ,convertW(next_y ,next_x))
 
-                            while map[next_x][next_y] >= .75:
-                                i+=1
-                                next_pos = convertM(locs[i][1],locs[i][0])
-                    
-                                next_x = int(next_pos[0])
-                                next_y = int(next_pos[1])
-                            print("premap")
-                            printMap(map)
+                            if(i + 50  < len(locs)):
+                                next_pos = convertM(locs[i+50][1],locs[i+50][0])
+                
+                                
+                            else:
+                                next_pos = convertM(locs[-1][1],locs[-1][0])
+                            
+                            next_x = int(next_pos[0])
+                            next_y = int(next_pos[1])
 
                             map = algo.gen_box_map(map, 11)
-                            print("postmap")
-                            printMap(map)
-                            print("pre-rrt")
+                          
                             new_path = rrt( convertM(pose_x, pose_y), (next_y,next_x), 1000, 10, map)
-                            print("start and end pos", convertM(pose_x, pose_y),  (next_x,next_y))
-                            print("post-rrt")
-                            #print(new_path, "new_path")
+                            print("start and end pos", convertM(pose_x, pose_y),  (next_y,next_x))
+        
                             if (not new_path):
                                 #do A*
                                 continue
                             else:
+                                print_list = []
                                 new_world_path = []
+        
                                 for x,y in new_path:
                                     new_world_path.append(convertW(x,y))
-                                    print(round(convertW(x,y)[0],3), round(convertW(x,y)[1],3), "world path cord")
-                                    for x in range(9):
+                                    print_list.append([(round(convertW(x,y)[0],3), round(convertW(x,y)[1],3)),(x,y)])
+                                    if map[int(x)][int(y)] > .75:
+                                        print("COLLISION IN NEW PATH", print_list[-1])
+                            
+                                    for  t in range(9):
                                         new_world_path.append(convertW(x,y))
-                                
-                                
-                                locs[state : state + len(new_world_path)] = new_world_path
-                                
+                               # print(print_list)  
+                                #print(locs[state: -1])
+                               # print("before")
+
+                                locs = locs[0:state+1] + new_world_path + locs[i+50:] 
+
+                                #print(locs[state:-1], "AFter")
+                            new_path_flag = True
                                 
 
                         
