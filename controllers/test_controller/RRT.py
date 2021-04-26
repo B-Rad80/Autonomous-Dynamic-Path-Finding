@@ -21,15 +21,13 @@ def state_is_valid(state, mapa):
     :param state: n-Dimensional point
     :return: Boolean whose value depends on whether the state/point is valid or not
     '''
-    if state[0] >= 0: return False
-    if state[0] < len(mapa): return False
-    if state[1] < len(mapa[0]): return False
-    if state[1] >= 0: return False    
-    if(mapa[state[0]][state[1]] == 1):
+    if state[0] <= 0: return False
+    if state[0] > len(mapa): return False
+    if state[1] > len(mapa): return False
+    if state[1] <= 0: return False    
+    if(mapa[int(state[0])][int(state[1])] == 1):
         return False
     return True
-
-return state_bounds, obstacles, state_is_valid
 
 def get_random_valid_vertex(mapa):
     '''
@@ -41,7 +39,8 @@ def get_random_valid_vertex(mapa):
     vertex = None
     while vertex is None: # Get starting vertex
         pt = [random.randrange(0,len(mapa)), random.randrange(0,len(mapa))]
-        if state_is_valid(pt):
+        #print(pt, "pt")
+        if state_is_valid(pt, mapa):
             vertex = np.array(pt)
     return vertex
 
@@ -97,10 +96,12 @@ def steer(from_point, to_point, delta_q):
         sub = (((to_point-from_point)/(dist))*delta_q)+from_point
         #getting 10 point between the start and end point
         path = np.linspace(from_point, sub, num = 10)
+        for i in range(len(path)):
+            path[i] = np.array([int(path[i][0]),int(path[i][1])])
 
     return path
 
-def check_path_valid(path):
+def check_path_valid(path, mapa):
     '''
     Function that checks if a path (or edge that is made up of waypoints) is collision free or not
     :param path: A 1D array containing a few (10 in our case) n-dimensional points along an edge
@@ -112,7 +113,7 @@ def check_path_valid(path):
     #going through every point in the path
     for i in path:
     	#if the point is not valid, return false.
-        if (state_is_valid(i) is not True):
+        if (state_is_valid(i, mapa) is not True):
             return False
     #gone through every point without returning false, then it must be true
     return True
@@ -139,26 +140,40 @@ def rrt(starting_point, goal_point, k, delta_q, mapa):
     # TODO: Your code here
     # TODO: Make sure to add every node you create onto node_list, and to set node.parent and node.path_from_parent for each
     # going through k iterations
+    broken = False
+
     for i in range(0,k):
+
+        if(i % 100 == 0):
+            print(i, "iteration")
+           # print("nodelist", node_list)
     	#if we have a goal point
+        
         if(goal_point is not None):
         	#if random returns a value less than .01, then use the goal point
             if(random.random() < .1):
                 x = goal_point
             #if the random is not less than .01, then use a random valid goal point
             else:
+                #print("pre get random valid vertex")
                 x = get_random_valid_vertex(mapa)
         #if we dont have a goal point, just use a random valid point
         else:
             x = get_random_valid_vertex(mapa)
+        #print(x, "random valid vertex")
+        #print("pre get_nearest")
+        x = np.array([int(x[0]),int(x[1])])
         #get the nearest vertex to the point
         v = get_nearest_vertex(node_list, x)
         #getting a path no longer than delta q towards that point
+        #print("pre steer")
         p = steer(v.point, x, delta_q)
         #if the path is valid
-        if(check_path_valid(p) == True):
+        #print("pre valid path")
+        if(check_path_valid(p, mapa) == True):
         	#create a new node at the final point in the path whose parent is the closest vertex
-            cool = Node(p[len(p)-1], v)
+            index = node_list.index(v)
+            cool = Node(p[-1], index )
             #adding the path
             cool.path_from_parent = p
             #adding the node to the list
@@ -167,6 +182,26 @@ def rrt(starting_point, goal_point, k, delta_q, mapa):
         if(goal_point is not None):
         	#if the latest node point added is very close to the goal, then end the loop
             if(np.linalg.norm(node_list[len(node_list) - 1].point - goal_point) < 10**-5):
+                broken = True
                 break
     #returning the list of nodes.
-    return node_list
+    if(broken == True):
+        nodes = []
+        nodes.append(node_list[-1])
+        parent = node_list[node_list[-1].parent]
+        points =[]
+        points.append(parent.point)
+        while not parent == None:
+            if(parent.parent):
+                    nodes.append(node_list[parent.parent])
+                    parent = node_list[parent.parent]
+                    points.append(parent.point)
+            else:
+                points.reverse()
+                print("points", points )
+                return points
+
+        print("other points", points)
+        return points.reverse()
+    else:
+        return None

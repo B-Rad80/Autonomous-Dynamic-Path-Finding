@@ -331,7 +331,35 @@ while robot.step(timestep) != -1 and mode != 'planner':
 
                         if(map[next_x][next_y] >= .75):
                             print("recalculate path ",map[next_x][next_y] ,convertW(next_y ,next_x))
+
+                            while map[next_x][next_y] >= .75:
+                                i+=1
+                                next_pos = convertM(locs[i][1],locs[i][0])
+                    
+                                next_x = int(next_pos[0])
+                                next_y = int(next_pos[1])
+ 
                             map = algo.gen_box_map(map, 11)
+                            print("pre-rrt")
+                            new_path = rrt( convertM(pose_x, pose_y), (next_x,next_y), 1000, 10, map)
+                            print("start and end pos", convertM(pose_x, pose_y),  (next_x,next_y))
+                            print("post-rrt")
+                            print(new_path, "new_path")
+                            if (not new_path):
+                                #do A*
+                                continue
+                            else:
+                                new_world_path = []
+                                for x,y in new_path:
+                                    new_world_path.append(convertW(x,y))
+                                    for x in range(9):
+                                        new_world_path.append(convertW(x,y))
+                                
+                                locs[state : state + len(new_world_path)] = new_world_path
+                                
+                                
+
+                        
         #if the bearing error is large enough. then prioritize it in the gains
         if(abs(errorb) > .2):
             gainp = .2
