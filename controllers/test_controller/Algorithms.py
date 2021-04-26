@@ -161,14 +161,14 @@ map = loadmap("test.npy")
 
 
 def gen_box_map(map : list, box_size, save : bool = False):
-    box_map =  np.zeros_like(map)
+    box_map =  map
     #if 1 in map:
      #   print("1 found!")
     for x in range(len(map)):
         for y in range(len(map[x])):
             #print(map[x][y], "map_XY")
             if map[x][y] >= 1 and map[x][y] < 2:
-                print(map[x][y], "gen_box_map x,y")
+                #print(map[x][y], "gen_box_map", x, y)
     
                 for xb in range(box_size+2):
                     for yb in range(box_size+2):
@@ -192,6 +192,7 @@ def gen_box_map(map : list, box_size, save : bool = False):
 
     if 1 in box_map:
         print("failure")     
+
     if(save):
         with open('box_map.npy', 'wb') as f:
             np.save(f, box_map)
@@ -200,7 +201,7 @@ def gen_box_map(map : list, box_size, save : bool = False):
     return box_map
 
 def printMap(map):
-    mapa = map
+    mapa = map.copy()
     for i in range(len(mapa)):
         for k in range(len(mapa)):
             if mapa[i][k] >= 1:
@@ -209,7 +210,7 @@ def printMap(map):
     plt.imshow(mapa)
     plt.show()
 if __name__ == "__main__": 
-    map = loadmap("./box_map.npy")
+    map = loadmap("./test.npy")
 
     printMap(map)
     map = gen_box_map(map, 11)

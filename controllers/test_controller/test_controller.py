@@ -149,7 +149,7 @@ if mode == 'planner':
 
 # Part 1.2: Map Initialization
 def printMap(map):
-    mapa = map
+    mapa = map.copy()
     for i in range(len(mapa)):
         for k in range(len(mapa)):
             if mapa[i][k] >= 1:
@@ -157,6 +157,9 @@ def printMap(map):
         
     plt.imshow(mapa)
     plt.show()
+
+    if 1 in map:
+        print("failure")
 # Initialize your map data structure here as a 2D floating point array
 if mode == 'manual':
     map = np.zeros((500,500), dtype=float)
