@@ -25,7 +25,7 @@ def state_is_valid(state, mapa):
     if state[0] >= len(mapa): return False
     if state[1] >= len(mapa): return False
     if state[1] < 0: return False    
-    if(mapa[round(state[0])][round(state[1])] == 1):
+    if(mapa[round(state[0])][round(state[1])] >= 1):
         return False
     return True
 
@@ -39,7 +39,6 @@ def get_random_valid_vertex(mapa):
     vertex = None
     while vertex is None: # Get starting vertex
         pt = [random.randrange(0,400), random.randrange(0,400)]
-        print(pt, "pt")
         if state_is_valid(pt, mapa):
             vertex = np.array(pt)
     return vertex
@@ -178,7 +177,7 @@ def rrt(starting_point, goal_point, k, delta_q, mapa):
         #if there is a goal point
         if(goal_point is not None):
         	#if the latest node point added is very close to the goal, then end the loop
-            if(np.linalg.norm(node_list[len(node_list) - 1].point - goal_point) < 10**-5):
+            if(np.linalg.norm(np.subtract(node_list[len(node_list) - 1].point, goal_point)) < 10**-5):
                 broken = True
                 break
     #returning the list of nodes.

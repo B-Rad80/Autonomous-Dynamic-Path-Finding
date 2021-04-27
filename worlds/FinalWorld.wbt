@@ -4,8 +4,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation -0.9978358070474342 -0.012786529759145251 0.06449966535350586 0.9386194011186024
-  position 5.2178318207513685 20.26981499763821 20.728821437412766
+  orientation -0.9967051315352824 -0.0808819134835912 -0.006082502977235487 1.3529603262718244
+  position 5.864588137618785 17.84395087038723 9.986772146038389
 }
 TexturedBackground {
 }
@@ -320,11 +320,50 @@ Solid {
       appearance PBRAppearance {
       }
       geometry Box {
-        size 1 1 1
+        size 1.5 1 1
       }
     }
   ]
   name "solid(6)"
+}
+Solid {
+  translation 8.48851 0.25 4.98552
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 0.5 0.5 0.5
+      }
+    }
+  ]
+  name "solid(20)"
+}
+Solid {
+  translation 4.9634 0.25 6.55292
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 0.5 0.5 0.5
+      }
+    }
+  ]
+  name "solid(22)"
+}
+Solid {
+  translation 5.01311 0.25 4.14442
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 0.5 0.5 0.5
+      }
+    }
+  ]
+  name "solid(21)"
 }
 TiagoSteel {
   translation 0.918827 0.0914641 0.883312

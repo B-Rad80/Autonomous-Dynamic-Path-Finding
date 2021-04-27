@@ -216,3 +216,5 @@ if __name__ == "__main__":
     map = gen_box_map(map, 20, True)
     #map = loadmap("./box_map.npy")
     printMap(map)
+
+

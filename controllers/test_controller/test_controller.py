@@ -280,7 +280,7 @@ while robot.step(timestep) != -1 and mode != 'planner':
 
             if(map[m_x][m_y] <= 1):
             
-               map[m_x][m_y] += .01
+               map[m_x][m_y] += .005
            
             g = map[m_x][m_y]
             if(g>.75):
@@ -371,17 +371,17 @@ while robot.step(timestep) != -1 and mode != 'planner':
                     i = state
                     new_path_flag = False
                     while (i < state + 20 ) and not new_path_flag:
-                        i +=1
                         next_pos = convertM(locs[i][1],locs[i][0])
                     
                         next_x = int(next_pos[0])
                         next_y = int(next_pos[1])
-
+                        i +=1
+                        
                         if(map[next_x][next_y] >= 1):
                             print("recalculate path ",map[next_x][next_y] ,convertW(next_y ,next_x))
 
-                            if(i + 20  < len(locs)):
-                                next_pos = convertM(locs[i+20][1],locs[i+20][0])
+                            if(i + 50  < len(locs)):
+                                next_pos = convertM(locs[i+50][1],locs[i+50][0])
                 
                                 
                             else:
@@ -395,7 +395,7 @@ while robot.step(timestep) != -1 and mode != 'planner':
                             
 
                             # print("Before RRT:", '\n')
-                            # new_path = rrt( convertM(pose_y, pose_x), (next_x,next_y), 1000, 5, map)
+                            
                             if(map1[convertM(pose_y, pose_x)[0]][convertM(pose_y, pose_x)[1]] >= 1):
                                 newStart = findNewStart(map1, convertM(pose_y, pose_x))
                             else:
@@ -403,37 +403,44 @@ while robot.step(timestep) != -1 and mode != 'planner':
                             print(newStart)
                             goalloc = (next_x,next_y)
                             while(map1[goalloc[0]][goalloc[1]] >= 1):
-                                goalloc = convertM(locs[i+20][1],locs[i+20][0])
-                                i+=20
-                            new_path = algo.path_planner(map1, newStart, goalloc)
-                            new_path1 = []
+                                goalloc = convertM(locs[i+50][1],locs[i+50][0])
+                                i+=50
+                            new_path = rrt(newStart, goalloc, 2000, 5, map1)
                             print(new_path)
-                            print("start and end pos", convertM(pose_x, pose_y),  (next_y,next_x))
-                            for z in new_path[0]:
-                                new_path1.append(z.location)
-                            new_path = new_path1
-                            new_path.reverse()
-                            # printPath(new_path, map)
+                            print("start and end pos", newStart,  goalloc)
+
                             # print("After RRT:")
                             
-        
+                            A = False
                             if (not new_path):
-                                #do A*
-                                continue
-                            else:
-                                print_list = []
-                                new_world_path = []
-        
-                                for x,y in new_path:
-                                    new_world_path.append(convertW(y,x))
-                                    print_list.append([(round(convertW(y,x)[0],3), round(convertW(y,x)[1],3))])
-                                    if map[int(x)][int(y)] > .75:
-                                        print("COLLISION IN NEW PATH", print_list[-1])
-                                print(print_list)  
-                                #print(locs[state: -1])
-                               # print("before")
+                                print("Fall Back to A*")
+                                new_path = algo.path_planner(map1, newStart, goalloc)
+                                new_path1 = []
+                                print(new_path)
+                                for z in new_path[0]:
+                                    new_path1.append(z.location)
+                                new_path = new_path1
+                                new_path.reverse()
+                                A = True
+                                # print("After RRT:")
+                                printPath(new_path, map)
+                            printPath(new_path, map)
+                            print_list = []
+                            new_world_path = []
+    
+                            for x,y in new_path:
+                                new_world_path.append(convertW(y,x))
+                                print_list.append([(round(convertW(y,x)[0],3), round(convertW(y,x)[1],3))])
+                                if map[int(x)][int(y)] > .75:
+                                    print("COLLISION IN NEW PATH", print_list[-1])
+                                if(A == False):
+                                    for w in range(9):
+                                        new_world_path.append(convertW(y,x))
+                            print(print_list)  
+                            #print(locs[state: -1])
+                           # print("before")
 
-                                locs = locs[0:state] + new_world_path + locs[state+20:] 
+                            locs = locs[0:state+1] + new_world_path + locs[state+50:] 
 
                                 #print(locs[state:-1], "AFter")
                             new_path_flag = True
