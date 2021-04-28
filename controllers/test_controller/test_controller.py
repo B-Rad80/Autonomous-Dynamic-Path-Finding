@@ -1,5 +1,3 @@
-
-"""lab5 controller."""
 from controller import Robot, Motor, Camera, RangeFinder, Lidar, Keyboard
 import math
 import numpy as np
@@ -43,14 +41,6 @@ for i in range(N_PARTS):
     robot_parts[i].setPosition(float(target_pos[i]))
     robot_parts[i].setVelocity(robot_parts[i].getMaxVelocity() / 2.0)
 
-# The Tiago robot has a couple more sensors than the e-Puck
-# Some of them are mentioned below. We will use its LiDAR for Lab 5
-
-# range = robot.getDevice('range-finder')
-# range.enable(timestep)
-# camera = robot.getDevice('camera')
-# camera.enable(timestep)
-# camera.recognitionEnable(timestep)
 lidar = robot.getDevice('Hokuyo URG-04LX-UG01')
 lidar.enable(timestep)
 lidar.enablePointCloud()
@@ -65,8 +55,6 @@ compass.enable(timestep)
 keyboard = robot.getKeyboard()
 keyboard.enable(timestep)
 
-# The display is used to display the map. We are using 360x360 pixels to
-# map the 12x12m2 apartment
 display = robot.getDevice("display")
 
 # Odometry
@@ -78,8 +66,8 @@ vL = 0
 vR = 0
 
 
-#mode = 'planner'
 mode = 'autonomous'
+# mode = 'autonomous'
 
 lidar_sensor_readings = []
 lidar_offsets = np.linspace(-LIDAR_ANGLE_RANGE/2., +LIDAR_ANGLE_RANGE/2., LIDAR_ANGLE_BINS)
@@ -91,11 +79,7 @@ gps.enable(timestep)
 compass = robot.getDevice("compass")
 compass.enable(timestep)
 
-###################
-#
-# Planner
-#
-###################
+#conversion functions
 def convertM(x,y):
     return (round(y*(30)),round(x*(30)))
 def convertW(x,y):
@@ -103,9 +87,6 @@ def convertW(x,y):
 
 if mode == 'planner':
 
-# Part 2.3 continuation: Call path_planner
-    #start positions in world coordinates
-    #equations to convert map points to world points and world points to map points
     map = loadmap("test.npy")
     box_map = algo.gen_box_map(map, 11)
     plt.imshow(box_map)
@@ -130,13 +111,10 @@ if mode == 'planner':
         locs.append(n.location)
     # print("best path found in ", len(locs), " steps")
     
-    
-# Part 2.4: Turn paths into goal points and save on disk as path.npy and visualize it
-    #making it so we can visualize the path in the box_map
     for x,y in visited:
         box_map[x][y] = .2
     for x,y in locs:
-        box_map[x][y] = .5
+        box_map[x][y] = .7
     plt.imshow(box_map)
     #making a file with all the path coordinates
     with open('path.npy', 'wb') as f:
@@ -147,7 +125,6 @@ if mode == 'planner':
     plt.show()
 
 
-# Part 1.2: Map Initialization
 def printMap(map):
     mapa = map.copy()
     for i in range(len(mapa)):
@@ -165,7 +142,6 @@ if mode == 'manual':
     map = np.zeros((500,500), dtype=float)
 
 if mode == 'autonomous':
-# Part 3.1: Load path from disk and visualize it (Make sure its properly indented)
     def loadmap(file):
          with open(file, 'rb') as f:
                    return np.load(f)
@@ -197,8 +173,6 @@ def check_neighbors_exist(possible_neighbors, map, visited):
 
     map_size = len(map)
     neighbors = []
-    #unq_cnt = unique(visited)
-    #print(unq_cnt, "visit")
     for x, y in possible_neighbors:
         if(x < map_size and x > 0 and y < map_size and y > 0 and not (x,y) in visited):
             neighbors.append((x,y))
@@ -224,11 +198,8 @@ def checkColl(loc, map, r = round((AXLE_LENGTH/2) * 30) -1):
             return True
     return False
 while robot.step(timestep) != -1 and mode != 'planner':
-###################
-#
+
 # Sensing
-#
-###################
     # Ground truth pose
     pose_y = gps.getValues()[2]
     pose_x = gps.getValues()[0]
@@ -253,31 +224,13 @@ while robot.step(timestep) != -1 and mode != 'planner':
 
 
         if rho < 0.5*LIDAR_SENSOR_MAX_RANGE:
-# Part 1.3: visualize map gray values.
-
-            # You will eventually REPLACE the following 2 lines with a more robust version of map
-            # and gray drawing that has more levels than just 0 and 1.
-
             
             m_x = int(wx*30-1) -1 
             m_y = int(wy*30-1) -1 \
 
             mpose_x = int(pose_x*30-1) -1 
             mpose_y = int(pose_y*30-1) -1
-
-            '''
-            #try to clean up lidar data (failed)
-            dist = int(np.linalg.norm(np.subtract((m_x,m_y),(mpose_x,mpose_y))))
-            line = np.linspace([m_x,m_y], [mpose_x,mpose_y], dist)
-
-            for x, y in line:
-                x = int(x)
-                y = int(y)
-                if map[x][y] > 0:
-                    map[x][y] -= .0025
-            ''' 
            
-
             if(map[m_x][m_y] <= 1):
             
                map[m_x][m_y] += .005
@@ -296,21 +249,9 @@ while robot.step(timestep) != -1 and mode != 'planner':
 
     display.setColor(int(0xFF0000))
     display.drawPixel(450-int(pose_y*30),int(pose_x*30))
-    
-    
-    
-    #The equation to calculate the colors assumes g to be in the range of 0..255, not 0..1
-    #display.setColor(int(g*256**2+g*256+g))
-    #g=map[i][j]*255
 
-
-
-
-###################
-#
 # Controller
-#
-###################
+
     if mode == 'manual':
         key = keyboard.getKey()
         while(keyboard.getKey() != -1): pass
@@ -331,9 +272,7 @@ while robot.step(timestep) != -1 and mode != 'planner':
             vR = 0
         elif key == ord('S'):
             with open('test.npy', 'wb') as f:
-                np.save(f, map)
-# Part 1.4: Save map to disc
-        
+                np.save(f, map)        
 
             print("Map file saved")
         elif key == ord('L'):
@@ -344,9 +283,6 @@ while robot.step(timestep) != -1 and mode != 'planner':
             vL *= 0.75
             vR *= 0.75
     else: # not manual mode
-# Part 3.2: Feedback controller
-        #STEP 1: Calculate the error
-        #position an  
         
        #calculating the bearing and positional errors for the bot
         errorp = ((pose_x-locs[state][0])**2+(pose_y-locs[state][1])**2)**(1/2)
@@ -423,7 +359,6 @@ while robot.step(timestep) != -1 and mode != 'planner':
                                 new_path.reverse()
                                 A = True
                                 # print("After RRT:")
-                                printPath(new_path, map)
                             printPath(new_path, map)
                             print_list = []
                             new_world_path = []
@@ -458,7 +393,6 @@ while robot.step(timestep) != -1 and mode != 'planner':
         else:
             gainp = 3
             gainb = 6
-        #STEP 3: Compute wheelspeeds
         #calculating wheelspeeds given errors and gains.
         vR = ((2*errorp*gainp)-(errorb*AXLE_LENGTH*gainb))/2
         vL = ((2*errorp*gainp)+(errorb*AXLE_LENGTH*gainb))/2
@@ -471,21 +405,9 @@ while robot.step(timestep) != -1 and mode != 'planner':
             vL = MAX_SPEED  
         #setting the actual wheelspeeds
         
-        #STEP 3: Compute wheelspeeds
-
-
-    # Normalize wheelspeed
-    # Keep the max speed a bit less to minimize the jerk in motion
-
-
-    # Odometry code. Don't change speeds after this
-    # We are using GPS and compass for this lab to get a better pose but this is how you'll do the odometry
     pose_x += (vL+vR)/2/MAX_SPEED*MAX_SPEED_MS*timestep/1000.0*math.cos(pose_theta)
     pose_y -= (vL+vR)/2/MAX_SPEED*MAX_SPEED_MS*timestep/1000.0*math.sin(pose_theta)
     pose_theta += (vR-vL)/AXLE_LENGTH/MAX_SPEED*MAX_SPEED_MS*timestep/1000.0
 
-    # print("X: %f Z: %f Theta: %f" % (pose_x, pose_y, pose_theta)) #/3.1415*180))
-
-    # Actuator commands
     robot_parts[MOTOR_LEFT].setVelocity(vL)
     robot_parts[MOTOR_RIGHT].setVelocity(vR)
